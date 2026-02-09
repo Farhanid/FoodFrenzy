@@ -2,7 +2,7 @@ import React from 'react'
 import { aboutfeature } from '../../assets/dummydata'
 import { Link } from 'react-router-dom'
 import { FaInfoCircle } from 'react-icons/fa'
-import  AboutImage  from '../../assets/aboutImage.png'
+import  AboutImage  from '../../assets/AboutImage.png'
 import FloatingParticle from '../FloatingParticle/FloatingParticle'
 import './AboutHome.css'
 
