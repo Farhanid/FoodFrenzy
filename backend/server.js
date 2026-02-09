@@ -20,7 +20,7 @@ const __dirname= path.dirname(__filename)
 //Middleware
 app.use(cors({
     origin: (origin, callback) =>{
-        const allowedOrigins = ['https://foodfrenzy-frontend.onrender.com', 'https://foodfrenzy-admin.onrender.com/orders']
+        const allowedOrigins = ['https://foodfrenzy-frontend.onrender.com', 'https://foodfrenzy-admin.onrender.com']
         if(!origin || allowedOrigins.includes(origin)){
             callback(null, true)
         }
