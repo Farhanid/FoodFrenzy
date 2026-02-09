@@ -32,7 +32,7 @@
 //           setLoading(true);
 
 //           if(paymentStatus === 'success' && sessionId){
-//             axios.post('http://localhost:4000/api/orders/confirm', 
+//             axios.post('https://foodfrenzy-backend.onrender.com/api/orders/confirm', 
 //               {sessionId},
 //               { headers : authHeaders}
 //               .then(({ data }) => {
@@ -86,7 +86,7 @@
 //       if(formData.paymentMethod === 'online'){
 
 //         const {data} = await axios.post(
-//           'http://localhost:4000/api/orders', 
+//           'https://foodfrenzy-backend.onrender.com/api/orders', 
 //           payload,
 //           { headers: authHeaders }
 //         )
@@ -95,7 +95,7 @@
 //         //COD
 
 //         const {data} = await axios.post(
-//           'http://localhost:4000/api/orders',
+//           'https://foodfrenzy-backend.onrender.com/api/orders',
 //            payload,
 //           { headers: authHeaders }
 //         )
@@ -272,7 +272,7 @@ const Checkout = () => {
 
       if (paymentStatus === 'success' && sessionId) {
         axios.post(
-          'http://localhost:4000/api/orders/confirm',
+          'https://foodfrenzy-backend.onrender.com/api/orders/confirm',
           { sessionId },
           { headers: authHeaders }
         )
@@ -324,14 +324,14 @@ const Checkout = () => {
     try {
       if (formData.paymentMethod === 'online') {
         const { data } = await axios.post(
-          'http://localhost:4000/api/orders',
+          'https://foodfrenzy-backend.onrender.com/api/orders',
           payload,
           { headers: authHeaders }
         )
         window.location.href = data.checkoutUrl;
       } else {
         const { data } = await axios.post(
-          'http://localhost:4000/api/orders',
+          'https://foodfrenzy-backend.onrender.com/api/orders',
           payload,
           { headers: authHeaders }
         )

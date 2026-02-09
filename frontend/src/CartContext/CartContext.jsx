@@ -60,7 +60,7 @@
 //       //HYDRATE FROM SERVER API
 //       useEffect(() => {
 //         const token = localStorage.getItem('authToken')
-//         axios.get('http://localhost:4000/api/cart',{
+//         axios.get('https://foodfrenzy-backend.onrender.com/api/cart',{
 //           withCredentials: true,
 //           headers:{ Authorization : `Bearer ${token}`},
 //         })
@@ -75,7 +75,7 @@
 //     const token = localStorage.getItem('authToken')
 
 //     const res = await axios.post(
-//       'http://localhost:4000/api/cart',
+//       'https://foodfrenzy-backend.onrender.com/api/cart',
 //       { itemId:  item._id, quantity: qty},
 //       {
 //          withCredentials: true,
@@ -89,7 +89,7 @@
 //   const removeFromCart = useCallback(async _id =>{
 //     const token = localStorage.getItem('authToken')
 //      await axios.delete(
-//        `http://localhost:4000/api/cart/${_id}`,
+//        `https://foodfrenzy-backend.onrender.com/api/cart/${_id}`,
 //        {
 //          withCredentials: true,
 //          headers: { Authorization: `Bearer ${token}` }
@@ -102,7 +102,7 @@
 //   const updateQuantity = useCallback(async (_id, qty) => {
 //     const token = localStorage.getItem('authToken')
 //     const res = await axios.put(
-//       `http://localhost:4000/api/cart/${_id}`,
+//       `https://foodfrenzy-backend.onrender.com/api/cart/${_id}`,
 //       {quantity: qty},
 //       {
 //         withCredentials: true,
@@ -115,7 +115,7 @@
 //   const clearCart = useCallback(async () => {
 //     const token = localStorage.getItem('authToken')
 //     await axios.post(
-//       'http://localhost:4000/api/cart/clear',
+//       'https://foodfrenzy-backend.onrender.com/api/cart/clear',
 //       {},
 //       {
 //         withCredentials: true,
@@ -236,7 +236,7 @@ export const CartProvider = ({ children }) => {
 
       try {
         console.log('Attempting to hydrate cart...');
-        const res = await axios.get('http://localhost:4000/api/cart', {
+        const res = await axios.get('https://foodfrenzy-backend.onrender.com/api/cart', {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -304,7 +304,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const res = await axios.post(
-        'http://localhost:4000/api/cart',
+        'https://foodfrenzy-backend.onrender.com/api/cart',
         { itemId: item._id, quantity: qty },
         {
           withCredentials: true,
@@ -338,7 +338,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       await axios.delete(
-        `http://localhost:4000/api/cart/${_id}`,
+        `https://foodfrenzy-backend.onrender.com/api/cart/${_id}`,
         {
           withCredentials: true,
           headers: {
@@ -370,7 +370,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const res = await axios.put(
-        `http://localhost:4000/api/cart/${_id}`,
+        `https://foodfrenzy-backend.onrender.com/api/cart/${_id}`,
         { quantity: qty },
         {
           withCredentials: true,
@@ -404,7 +404,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       await axios.post(
-        'http://localhost:4000/api/cart/clear',
+        'https://foodfrenzy-backend.onrender.com/api/cart/clear',
         {},
         {
           withCredentials: true,

@@ -55,7 +55,7 @@
 //             });
 
 //             const res = await axios.post(
-//                 'http://localhost:4000/api/items',
+//                 'https://foodfrenzy-backend.onrender.com/api/items',
 //                 payload,
 //                 { headers: { 'Content-Type': 'multipart/form-data' } }
 //             )
@@ -269,7 +269,7 @@ const AddItems = () => {
             });
 
             const res = await axios.post(
-                'http://localhost:4000/api/items',
+                'https://foodfrenzy-backend.onrender.com/api/items',
                 payload,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             )

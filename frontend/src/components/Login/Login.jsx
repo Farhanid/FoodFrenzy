@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 
-const url = 'http://localhost:4000'
+const url = 'https://foodfrenzy-backend.onrender.com'
 
 const Login = ({onLoginSuccess, onClose}) => {
   const [showToast, setShowToast] = useState({ visible:false, message:'', isError: false})

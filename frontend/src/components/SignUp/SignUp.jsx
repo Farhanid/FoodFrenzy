@@ -4,7 +4,7 @@
 // import { useNavigate } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 
-// const url = 'http://localhost:4000'
+// const url = 'https://foodfrenzy-backend.onrender.com'
 
 // const AwesomeToast = ({message, icon}) => {
 //     return(
@@ -137,7 +137,7 @@ import { FaArrowLeft, FaCheckCircle, FaEye, FaEyeSlash, FaExclamationTriangle } 
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-const url = 'http://localhost:4000'
+const url = 'https://foodfrenzy-backend.onrender.com'
 
 const AwesomeToast = ({ message, icon, type = 'success' }) => {
   const bgColor = type === 'error'
