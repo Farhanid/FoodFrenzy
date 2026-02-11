@@ -11,7 +11,8 @@ const SignUpPage = () => {
                         routing="path"
                         path="/sign-up"
                         signInUrl="/sign-in"
-                        redirectUrl="/"
+                        redirectUrl="/"              // After sign up, go to dashboard
+                        afterSignUpUrl="/"           // 🔴 ADD THIS - forces redirect to dashboard
                         appearance={{
                             elements: {
                                 rootBox: "w-full",
