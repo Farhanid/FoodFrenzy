@@ -510,6 +510,266 @@
 
 
 
+// import React, {
+//   createContext,
+//   useCallback,
+//   useContext,
+//   useEffect,
+//   useReducer,
+//   useRef,
+// } from 'react';
+// import axios from 'axios';
+
+// const CartContext = createContext();
+
+// // ---------------- REDUCER ----------------
+// const cartReducer = (state, action) => {
+//   switch (action.type) {
+//     case 'HYDRATE_CART':
+//       return action.payload || [];
+
+//     case 'ADD_ITEM': {
+//       const { _id, item, quantity } = action.payload;
+//       const exists = state.find(ci => ci._id === _id);
+//       if (exists) {
+//         return state.map(ci =>
+//           ci._id === _id ? { ...ci, quantity: ci.quantity + quantity } : ci
+//         );
+//       }
+//       return [...state, { _id, item, quantity }];
+//     }
+
+//     case 'REMOVE_ITEM':
+//       return state.filter(ci => ci._id !== action.payload);
+
+//     case 'UPDATE_ITEM': {
+//       const { _id, quantity } = action.payload;
+//       return state.map(ci =>
+//         ci._id === _id ? { ...ci, quantity } : ci
+//       );
+//     }
+
+//     case 'CLEAR_CART':
+//       return [];
+
+//     default:
+//       return state;
+//   }
+// };
+
+// // ---------------- INITIALIZER ----------------
+// const initializer = () => {
+//   try {
+//     return JSON.parse(localStorage.getItem('cart') || '[]');
+//   } catch {
+//     return [];
+//   }
+// };
+
+// // ---------------- AXIOS INSTANCE ----------------
+// const api = axios.create({
+//   baseURL: 'https://foodfrenzy-backend.onrender.com',
+//   withCredentials: true,
+// });
+
+// // ---------------- PROVIDER ----------------
+// export const CartProvider = ({ children }) => {
+//   const [cartItems, dispatch] = useReducer(cartReducer, [], initializer);
+//   const hasHydratedRef = useRef(false);
+
+//   // Persist to localStorage
+//   useEffect(() => {
+//     localStorage.setItem('cart', JSON.stringify(cartItems));
+//   }, [cartItems]);
+
+//   // ---------------- HYDRATE CART (ONCE) ----------------
+//   useEffect(() => {
+//     const hydrateCart = async () => {
+//       const token = localStorage.getItem('authToken');
+//       if (!token) return;
+
+//       if (hasHydratedRef.current) return;
+
+//       try {
+//         const res = await api.get('/api/cart', {
+//           headers: { Authorization: `Bearer ${token}` },
+//           timeout: 5000,
+//         });
+
+//         if (Array.isArray(res.data)) {
+//           dispatch({ type: 'HYDRATE_CART', payload: res.data });
+//         }
+
+//         hasHydratedRef.current = true;
+//       } catch (err) {
+//         console.error('Cart hydration error:', err);
+
+//         if (err.response?.status === 401) {
+//           localStorage.removeItem('authToken');
+//           localStorage.removeItem('cart');
+//         }
+
+//         hasHydratedRef.current = true;
+//       }
+//     };
+
+//     hydrateCart();
+
+//     const handleStorageChange = e => {
+//       if (e.key === 'authToken') {
+//         hasHydratedRef.current = false;
+//       }
+//     };
+
+//     window.addEventListener('storage', handleStorageChange);
+//     return () => window.removeEventListener('storage', handleStorageChange);
+//   }, []);
+
+//   // ---------------- ADD TO CART (OPTIMISTIC) ----------------
+//   const addToCart = useCallback(async (item, qty) => {
+//     const token = localStorage.getItem('authToken');
+//     if (!token) throw new Error('Authentication required');
+
+//     // Optimistic UI update
+//     dispatch({
+//       type: 'ADD_ITEM',
+//       payload: { _id: item._id, item, quantity: qty },
+//     });
+
+//     try {
+//       await api.post(
+//         '/api/cart',
+//         { itemId: item._id, quantity: qty },
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
+//     } catch (err) {
+//       console.error('Add to cart failed:', err);
+
+//       // Rollback on failure
+//       dispatch({ type: 'REMOVE_ITEM', payload: item._id });
+
+//       if (err.response?.status === 401 || err.response?.status === 403) {
+//         localStorage.removeItem('authToken');
+//         throw new Error('Session expired. Please log in again.');
+//       }
+
+//       throw err;
+//     }
+//   }, []);
+
+//   // ---------------- REMOVE FROM CART (OPTIMISTIC) ----------------
+//   const removeFromCart = useCallback(async (_id) => {
+//     const token = localStorage.getItem('authToken');
+//     if (!token) throw new Error('Authentication required');
+
+//     // Optimistic UI update
+//     dispatch({ type: 'REMOVE_ITEM', payload: _id });
+
+//     try {
+//       await api.delete(`/api/cart/${_id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//     } catch (err) {
+//       console.error('Remove from cart failed:', err);
+//       throw err;
+//     }
+//   }, []);
+
+
+//   // ---------------- UPDATE QUANTITY (OPTIMISTIC) ----------------
+//   const updateQuantity = useCallback(async (_id, qty) => {
+//     const token = localStorage.getItem('authToken');
+//     if (!token) throw new Error('Authentication required');
+
+//     // Optimistic UI update
+//     dispatch({ type: 'UPDATE_ITEM', payload: { _id, quantity: qty } });
+
+//     try {
+//       await api.put(
+//         `/api/cart/${_id}`,
+//         { quantity: qty },
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
+//     } catch (err) {
+//       console.error('Update quantity failed:', err);
+//       throw err;
+//     }
+//   }, []);
+
+
+//   // ---------------- CLEAR CART ----------------
+//   const clearCart = useCallback(async () => {
+//     const token = localStorage.getItem('authToken');
+//     if (!token) throw new Error('Authentication required');
+
+//     // Optimistic UI update
+//     dispatch({ type: 'CLEAR_CART' });
+
+//     try {
+//       await api.post(
+//         '/api/cart/clear',
+//         {},
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
+//     } catch (err) {
+//       console.error('Clear cart failed:', err);
+//       throw err;
+//     }
+//   }, []);
+
+//   // ---------------- TOTALS ----------------
+//   const totalItems = cartItems.reduce((sum, ci) => sum + (ci?.quantity || 0), 0);
+
+//   const totalAmount = cartItems.reduce((sum, ci) => {
+//     const price = ci?.item?.price ?? 0;
+//     const qty = ci?.quantity ?? 0;
+//     return sum + price * qty;
+//   }, 0);
+
+//   return (
+//     <CartContext.Provider
+//       value={{
+//         cartItems,
+//         addToCart,
+//         removeFromCart,
+//         updateQuantity,
+//         clearCart,
+//         totalItems,
+//         totalAmount,
+//         isLoading: false,
+//       }}
+//     >
+//       {children}
+//     </CartContext.Provider>
+//   );
+// };
+
+// // ---------------- HOOK ----------------
+// export const useCart = () => useContext(CartContext);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, {
   createContext,
   useCallback,
@@ -529,23 +789,25 @@ const cartReducer = (state, action) => {
       return action.payload || [];
 
     case 'ADD_ITEM': {
-      const { _id, item, quantity } = action.payload;
-      const exists = state.find(ci => ci._id === _id);
+      const { cartItemId, item, quantity } = action.payload;
+      const exists = state.find(ci => ci.item._id === item._id);
       if (exists) {
         return state.map(ci =>
-          ci._id === _id ? { ...ci, quantity: ci.quantity + quantity } : ci
+          ci.item._id === item._id
+            ? { ...ci, quantity: ci.quantity + quantity, _id: cartItemId }
+            : ci
         );
       }
-      return [...state, { _id, item, quantity }];
+      return [...state, { _id: cartItemId, item, quantity }];
     }
 
     case 'REMOVE_ITEM':
-      return state.filter(ci => ci._id !== action.payload);
+      return state.filter(ci => ci.item._id !== action.payload);
 
     case 'UPDATE_ITEM': {
-      const { _id, quantity } = action.payload;
+      const { productId, quantity } = action.payload;
       return state.map(ci =>
-        ci._id === _id ? { ...ci, quantity } : ci
+        ci.item._id === productId ? { ...ci, quantity } : ci
       );
     }
 
@@ -630,20 +892,31 @@ export const CartProvider = ({ children }) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Optimistic UI update
+    // Generate a temporary ID for optimistic update
+    const tempCartItemId = `temp_${Date.now()}_${item._id}`;
+
+    // Optimistic UI update with temp ID
     dispatch({
       type: 'ADD_ITEM',
-      payload: { _id: item._id, item, quantity: qty },
+      payload: { cartItemId: tempCartItemId, item, quantity: qty },
     });
 
     try {
-      await api.post(
+      const response = await api.post(
         '/api/cart',
         { itemId: item._id, quantity: qty },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      // Replace temp ID with real cartItem ID from backend
+      if (response.data && response.data._id) {
+        dispatch({
+          type: 'ADD_ITEM',
+          payload: { cartItemId: response.data._id, item, quantity: qty },
+        });
+      }
     } catch (err) {
       console.error('Add to cart failed:', err);
 
@@ -660,34 +933,58 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   // ---------------- REMOVE FROM CART (OPTIMISTIC) ----------------
-  const removeFromCart = useCallback(async (_id) => {
+  const removeFromCart = useCallback(async (productId) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Optimistic UI update
-    dispatch({ type: 'REMOVE_ITEM', payload: _id });
+    // Find the cart item to get its ID for local state update
+    const cartItem = cartItems.find(ci => ci.item._id === productId);
+    if (!cartItem) return;
+
+    // Optimistic UI update using productId
+    dispatch({ type: 'REMOVE_ITEM', payload: productId });
 
     try {
-      await api.delete(`/api/cart/${_id}`, {
+      await api.delete(`/api/cart/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch (err) {
       console.error('Remove from cart failed:', err);
+
+      // Rollback on failure - re-add the item
+      if (cartItem) {
+        dispatch({
+          type: 'ADD_ITEM',
+          payload: {
+            cartItemId: cartItem._id,
+            item: cartItem.item,
+            quantity: cartItem.quantity
+          },
+        });
+      }
+
       throw err;
     }
-  }, []);
+  }, [cartItems]);
 
   // ---------------- UPDATE QUANTITY (OPTIMISTIC) ----------------
-  const updateQuantity = useCallback(async (_id, qty) => {
+  const updateQuantity = useCallback(async (productId, qty) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Optimistic UI update
-    dispatch({ type: 'UPDATE_ITEM', payload: { _id, quantity: qty } });
+    // Find the cart item
+    const cartItem = cartItems.find(ci => ci.item._id === productId);
+    if (!cartItem) return;
+
+    // Optimistic UI update using productId
+    dispatch({
+      type: 'UPDATE_ITEM',
+      payload: { productId, quantity: qty }
+    });
 
     try {
       await api.put(
-        `/api/cart/${_id}`,
+        `/api/cart/${productId}`,
         { quantity: qty },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -695,14 +992,26 @@ export const CartProvider = ({ children }) => {
       );
     } catch (err) {
       console.error('Update quantity failed:', err);
+
+      // Rollback on failure - restore original quantity
+      if (cartItem) {
+        dispatch({
+          type: 'UPDATE_ITEM',
+          payload: { productId, quantity: cartItem.quantity },
+        });
+      }
+
       throw err;
     }
-  }, []);
+  }, [cartItems]);
 
   // ---------------- CLEAR CART ----------------
   const clearCart = useCallback(async () => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
+
+    // Save current cart for potential rollback
+    const currentCart = [...cartItems];
 
     // Optimistic UI update
     dispatch({ type: 'CLEAR_CART' });
@@ -717,9 +1026,13 @@ export const CartProvider = ({ children }) => {
       );
     } catch (err) {
       console.error('Clear cart failed:', err);
+
+      // Rollback on failure
+      dispatch({ type: 'HYDRATE_CART', payload: currentCart });
+
       throw err;
     }
-  }, []);
+  }, [cartItems]);
 
   // ---------------- TOTALS ----------------
   const totalItems = cartItems.reduce((sum, ci) => sum + (ci?.quantity || 0), 0);
@@ -729,6 +1042,11 @@ export const CartProvider = ({ children }) => {
     const qty = ci?.quantity ?? 0;
     return sum + price * qty;
   }, 0);
+
+  // Helper function to find cartItem by productId
+  const getCartItemByProductId = useCallback((productId) => {
+    return cartItems.find(ci => ci.item._id === productId);
+  }, [cartItems]);
 
   return (
     <CartContext.Provider
@@ -740,6 +1058,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         totalItems,
         totalAmount,
+        getCartItemByProductId,
         isLoading: false,
       }}
     >
@@ -749,5 +1068,10 @@ export const CartProvider = ({ children }) => {
 };
 
 // ---------------- HOOK ----------------
-export const useCart = () => useContext(CartContext);
-
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within CartProvider');
+  }
+  return context;
+};
