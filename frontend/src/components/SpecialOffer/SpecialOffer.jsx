@@ -5,6 +5,7 @@ import { FaFire, FaHeart, FaPlus, FaStar } from 'react-icons/fa'
 import { HiMinus, HiPlus } from "react-icons/hi";
 import FloatingParticle from '../FloatingParticle/FloatingParticle';
 import axios from 'axios';
+import { getImageUrl } from '../../utils/imageHelper';
 
 
 const SpecialOffer = () => {
@@ -22,6 +23,8 @@ const SpecialOffer = () => {
     }, [])
 
     const displayList = Array.isArray(items) ? items.slice(0, showAll ? 8 : 4 ) : []
+
+   
 
 
   return (
@@ -46,7 +49,16 @@ const SpecialOffer = () => {
                     return(
                         <div key={item._id} className='relative group bg-[#4b3b3b] rounded-3xl overflow-hidden shadow-2xl transform hover:-translate-y-4 transition-all duration-500 hover:shadow-red-900/40 border-2 border-transparent hover:border-amber-500/20 before:absolute before:inset-0 hover:before:opacity-20'>
                             <div className='relative h-72 overflow-hidden'>
-                                <img src={item.imageUrl } alt={item.name} className='w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-all duration-500' />
+                                {/* <img src={item.imageUrl } alt={item.name} className='w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-all duration-500' /> */}
+                                <img
+                                    src={getImageUrl(item.imageUrl)}
+                                    alt={item.name}
+                                    className='w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-all duration-500'
+                                    onError={(e) => {
+                                        console.error('Image failed to load:', item.imageUrl);
+                                        e.target.src = '/placeholder-image.jpg'; // Add fallback
+                                    }}
+                                />
                                 <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90'/>
                                 <div className='absolute bottom-4 left-4 right-4 flex justify-between items-center bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full'>
                                     <span className='flex items-center gap-2 text-amber-400'>

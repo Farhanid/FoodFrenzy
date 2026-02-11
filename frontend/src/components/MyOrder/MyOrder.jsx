@@ -15,6 +15,7 @@ const MyOrder = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
+                // const response = await axios.get('https://foodfrenzy-backend.onrender.com/api/orders', {
                 const response = await axios.get('https://foodfrenzy-backend.onrender.com/api/orders', {
                     params: { email: user?.email },
                     headers: {
@@ -210,6 +211,7 @@ const MyOrder = () => {
                                                     <div className='space-y-2'>
                                                         {order.items.map((item, index) => (
                                                             <div key={`${order._id}-${index}`} className='flex items-center gap-3 p-2  bg-[#3a2b2b]/50 rounded-lg'>
+                                                                {/* <img src={`https://foodfrenzy-backend.onrender.com${item.item.imageUrl}`} alt={item.item.name} className='w-10 h-10 object-cover rounded-lg' /> */}
                                                                 <img src={`https://foodfrenzy-backend.onrender.com${item.item.imageUrl}`} alt={item.item.name} className='w-10 h-10 object-cover rounded-lg' />
 
                                                                 <div className='flex-1'>

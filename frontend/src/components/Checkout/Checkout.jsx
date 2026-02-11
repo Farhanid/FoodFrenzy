@@ -272,7 +272,8 @@ const Checkout = () => {
 
       if (paymentStatus === 'success' && sessionId) {
         axios.post(
-          'https://foodfrenzy-backend.onrender.com/api/orders/confirm',
+          // 'https://foodfrenzy-backend.onrender.com/api/orders/confirm',
+          'https://localhost:4000/api/orders/confirm',
           { sessionId },
           { headers: authHeaders }
         )
@@ -324,6 +325,7 @@ const Checkout = () => {
     try {
       if (formData.paymentMethod === 'online') {
         const { data } = await axios.post(
+          // 'https://foodfrenzy-backend.onrender.com/api/orders',
           'https://foodfrenzy-backend.onrender.com/api/orders',
           payload,
           { headers: authHeaders }
@@ -331,6 +333,7 @@ const Checkout = () => {
         window.location.href = data.checkoutUrl;
       } else {
         const { data } = await axios.post(
+          // 'https://foodfrenzy-backend.onrender.com/api/orders',
           'https://foodfrenzy-backend.onrender.com/api/orders',
           payload,
           { headers: authHeaders }

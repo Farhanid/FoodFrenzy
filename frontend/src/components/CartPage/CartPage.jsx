@@ -4,6 +4,8 @@ import {useCart } from '../../CartContext/CartContext'
 import { FaMinus, FaPlus, FaTimes, FaTrash } from 'react-icons/fa';
 
 
+// const API_URL = 'https://foodfrenzy-backend.onrender.com'
+
 const API_URL = 'https://foodfrenzy-backend.onrender.com'
 
 

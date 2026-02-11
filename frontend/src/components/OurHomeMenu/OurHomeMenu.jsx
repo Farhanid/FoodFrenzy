@@ -5,6 +5,7 @@ import { FaMinus, FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router-dom';
 import './OurHomeMenu.css'
 import axios from 'axios';
+import { getImageUrl } from '../../utils/imageHelper';
 
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Mexican', 'Italian', 'Desserts', 'Drinks']
 
@@ -15,6 +16,7 @@ const OurHomeMenu = () => {
     const [menuData, setMenuData] = useState({})
 
     useEffect(() => {
+      // axios.get('https://foodfrenzy-backend.onrender.com/api/items')
       axios.get('https://foodfrenzy-backend.onrender.com/api/items')
       .then(res => {
         const grouped = res.data.reduce((acc, item) => {
@@ -64,7 +66,7 @@ const OurHomeMenu = () => {
                   <div key={item._id} className='relative bg-amber-900/20 rounded-2xl overflow-hidden border border-amber-800/30 backdrop-blur-sm flex flex-col transition-all duration-500'
                     style={{ '--index': i}}>
                       <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10 '>
-                          <img src={item.imageUrl} alt={item.name} 
+                      <img src={getImageUrl(item.imageUrl)} alt={item.name} 
                           className='max-h-full max-w-full object-contain transition-all duration-700' />
                       </div> 
                         <div className='p-4 sm:p-6 flex flex-col flex-grow '>

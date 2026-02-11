@@ -31,6 +31,19 @@ app.use(cors({
     credentials: true,
 }
 ));
+// app.use(cors({
+//     origin: (origin, callback) => {
+//         const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true)
+//         }
+//         else {
+//             callback(new Error('Not Allowe By CORS'))
+//         }
+//     },
+//     credentials: true,
+// }
+// ));
 
 
 // app.use(cors({

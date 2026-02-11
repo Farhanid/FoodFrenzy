@@ -137,6 +137,7 @@ import { FaArrowLeft, FaCheckCircle, FaEye, FaEyeSlash, FaExclamationTriangle } 
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+// const url = 'https://foodfrenzy-backend.onrender.com'
 const url = 'https://foodfrenzy-backend.onrender.com'
 
 const AwesomeToast = ({ message, icon, type = 'success' }) => {

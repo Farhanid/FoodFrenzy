@@ -19,3 +19,11 @@ const cartItemSchema = mongoose.Schema({
 }, {timestamps: true})
 
 export const CartItem = mongoose.model('CartItem', cartItemSchema)
+
+
+
+
+
+
+
+

@@ -3,6 +3,16 @@ import jwt from 'jsonwebtoken'
 import bycrypt from 'bcryptjs'
 import validator from 'validator'
 
+
+
+
+//Create A Token
+const createToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET)
+}
+
+
+
 //Logic Function
 const loginUser = async (req,res) => {
     const {email, password } = req.body;
@@ -26,11 +36,6 @@ const loginUser = async (req,res) => {
 
 
 
-//Create A Token
-const createToken =(id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET)
-}
-
 //Register Function
 const registerUser = async (req, res) => {
     const {username, password, email} = req.body;
@@ -46,7 +51,7 @@ const registerUser = async (req, res) => {
         }
 
         if(password.lenght < 8){
-            return res.json({ success:false, message: "Please Enter Strong Password"})
+            return res.json({ success:false, message: "Please Enter Strong Password"})    //change
         }
         //If Everything works
         const salt = await bycrypt.genSalt(10)
