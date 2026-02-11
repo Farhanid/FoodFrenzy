@@ -88,7 +88,7 @@ const Navbar = () => {
             </NavLink>
           ))}
 
-          {/* Auth buttons - always visible */}
+          {/* Auth buttons */}
           {!isSignedIn ? (
             <>
               <NavLink
@@ -134,7 +134,6 @@ const Navbar = () => {
             </NavLink>
           ))}
 
-          {/* Mobile auth buttons */}
           {!isSignedIn ? (
             <>
               <NavLink

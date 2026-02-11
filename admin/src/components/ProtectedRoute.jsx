@@ -1,8 +1,23 @@
-import { useAuth } from '@clerk/clerk-react'
-import { Navigate } from 'react-router-dom'
+import { useAuth, useUser } from '@clerk/clerk-react'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const ProtectedRoute = ({ children }) => {
     const { isSignedIn, isLoaded } = useAuth()
+    const { user } = useUser()
+    const navigate = useNavigate()
+
+    // 🔴 BACKUP FIX: Force redirect after sign up
+    useEffect(() => {
+        if (isSignedIn && user) {
+            // Check if we just signed up (you can set this flag anywhere)
+            const justSignedUp = sessionStorage.getItem('clerk_sign_up')
+            if (justSignedUp) {
+                sessionStorage.removeItem('clerk_sign_up')
+                navigate('/', { replace: true })
+            }
+        }
+    }, [isSignedIn, user, navigate])
 
     if (!isLoaded) {
         return (

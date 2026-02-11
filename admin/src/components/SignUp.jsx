@@ -11,8 +11,8 @@ const SignUpPage = () => {
                         routing="path"
                         path="/sign-up"
                         signInUrl="/sign-in"
-                        redirectUrl="/"              // After sign up, go to dashboard
-                        afterSignUpUrl="/"           // 🔴 ADD THIS - forces redirect to dashboard
+                        // 🔴 REMOVED afterSignUpUrl & redirectUrl - they're buggy
+                        // 🔴 USING FORCE REDIRECT FROM .env INSTEAD
                         appearance={{
                             elements: {
                                 rootBox: "w-full",

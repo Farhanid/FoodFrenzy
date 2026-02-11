@@ -24,7 +24,6 @@
 // export default App
 
 
-
 import AddItems from "./components/AddItems"
 import List from "./components/List"
 import Navbar from "./components/Navbar"
@@ -52,11 +51,11 @@ function App() {
     <>
       <Navbar />
       <Routes>
-        {/* Public Routes - Always accessible */}
+        {/* Public Routes */}
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
 
-        {/* Protected Routes - Only when logged in */}
+        {/* Protected Routes */}
         <Route path="/" element={
           <ProtectedRoute>
             <AddItems />
@@ -73,7 +72,6 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Redirect any unknown routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

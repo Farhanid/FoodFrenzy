@@ -11,8 +11,8 @@ const SignInPage = () => {
                         routing="path"
                         path="/sign-in"
                         signUpUrl="/sign-up"
-                        redirectUrl="/"              // 🔴 ADD THIS
-                        afterSignInUrl="/"           // 🔴 ADD THIS
+                        // 🔴 REMOVED afterSignInUrl & redirectUrl - they're buggy
+                        // 🔴 USING FORCE REDIRECT FROM .env INSTEAD
                         appearance={{
                             elements: {
                                 rootBox: "w-full",
