@@ -151,6 +151,31 @@ const API_URL = 'https://foodfrenzy-backend.onrender.com'
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, totalAmount } = useCart();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState({});
+
+  // Handle update quantity with loading state
+  const handleUpdateQuantity = async (productId, newQuantity) => {
+    setLoading(prev => ({ ...prev, [productId]: true }));
+    try {
+      await updateQuantity(productId, newQuantity);
+    } catch (error) {
+      console.error('Failed to update quantity:', error);
+    } finally {
+      setLoading(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  // Handle remove item with loading state
+  const handleRemoveItem = async (productId) => {
+    setLoading(prev => ({ ...prev, [`remove_${productId}`]: true }));
+    try {
+      await removeFromCart(productId);
+    } catch (error) {
+      console.error('Failed to remove item:', error);
+    } finally {
+      setLoading(prev => ({ ...prev, [`remove_${productId}`]: false }));
+    }
+  };
 
   // FOR IMAGE URL
   const buildImageUrl = (path) => {
@@ -195,12 +220,16 @@ const CartPage = () => {
                     </p>
                   </div>
 
-                  {/* CHANGE 1: Use item._id (product ID) instead of _id (cartItem ID) */}
                   <div className='flex items-center gap-3'>
                     <button
-                      onClick={() => updateQuantity(item._id, Math.max(1, quantity - 1))}
-                      className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95'>
-                      <FaMinus className='w-4 h-4 text-amber-100' />
+                      onClick={() => handleUpdateQuantity(item._id, Math.max(1, quantity - 1))}
+                      disabled={loading[item._id]}
+                      className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95 disabled:opacity-50'>
+                      {loading[item._id] ? (
+                        <div className='w-4 h-4 border-2 border-amber-100 border-t-transparent rounded-full animate-spin'></div>
+                      ) : (
+                        <FaMinus className='w-4 h-4 text-amber-100' />
+                      )}
                     </button>
 
                     <span className='w-8 text-center text-amber-100 font-cinzel'>
@@ -208,19 +237,30 @@ const CartPage = () => {
                     </span>
 
                     <button
-                      onClick={() => updateQuantity(item._id, quantity + 1)}
-                      className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95'>
-                      <FaPlus className='w-4 h-4 text-amber-100' />
+                      onClick={() => handleUpdateQuantity(item._id, quantity + 1)}
+                      disabled={loading[item._id]}
+                      className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95 disabled:opacity-50'>
+                      {loading[item._id] ? (
+                        <div className='w-4 h-4 border-2 border-amber-100 border-t-transparent rounded-full animate-spin'></div>
+                      ) : (
+                        <FaPlus className='w-4 h-4 text-amber-100' />
+                      )}
                     </button>
                   </div>
 
                   <div className='flex items-center justify-between w-full'>
-                    {/* CHANGE 2: Use item._id (product ID) instead of _id (cartItem ID) */}
                     <button
-                      onClick={() => removeFromCart(item._id)}
-                      className='bg-amber-900/40 px-3 py-2.5 rounded-full font-cinzel text-xs uppercase transition-all duration-300 hover:bg-amber-600/50 flex items-center gap-1 active:scale-95'>
-                      <FaTrash className='w-4 h-4 text-amber-100' />
-                      <span className='text-amber-100'>Remove</span>
+                      onClick={() => handleRemoveItem(item._id)}
+                      disabled={loading[`remove_${item._id}`]}
+                      className='bg-amber-900/40 px-3 py-2.5 rounded-full font-cinzel text-xs uppercase transition-all duration-300 hover:bg-amber-600/50 flex items-center gap-1 active:scale-95 disabled:opacity-50'>
+                      {loading[`remove_${item._id}`] ? (
+                        <div className='w-4 h-4 border-2 border-amber-100 border-t-transparent rounded-full animate-spin'></div>
+                      ) : (
+                        <>
+                          <FaTrash className='w-4 h-4 text-amber-100' />
+                          <span className='text-amber-100'>Remove</span>
+                        </>
+                      )}
                     </button>
 
                     <p className='text-sm font-dancingscript text-amber-300'>
@@ -232,7 +272,7 @@ const CartPage = () => {
             </div>
 
             <div className='mt-12 pt-8 border-t border-amber-800/30 animate-fade-in-up'>
-              <div className='flex flex-col sm:flex-row justify-between items-center gap-8'> {/* Fixed typo: hap-8 to gap-8 */}
+              <div className='flex flex-col sm:flex-row justify-between items-center gap-8'>
                 <Link to='/menu' className='bg-amber-900/40 px-8 py-3 rounded-full font-cinzel uppercase tracking-wider hover:bg-amber-800/50 transition-all duration-300 text-amber-100 inline-flex items-center gap-2 hover:gap-3 active:scale-95'>
                   Continue Shopping
                 </Link>
@@ -269,4 +309,4 @@ const CartPage = () => {
   )
 }
 
-export default CartPage
+export default CartPage;

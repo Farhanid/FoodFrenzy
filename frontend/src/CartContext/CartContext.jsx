@@ -790,21 +790,28 @@ const cartReducer = (state, action) => {
 
     case 'ADD_ITEM': {
       const { cartItemId, item, quantity } = action.payload;
-      const exists = state.find(ci => ci.item._id === item._id);
-      if (exists) {
-        return state.map(ci =>
-          ci.item._id === item._id
-            ? { ...ci, quantity: ci.quantity + quantity, _id: cartItemId }
-            : ci
-        );
+      // Check if item already exists in cart (by product ID)
+      const existingIndex = state.findIndex(ci => ci.item._id === item._id);
+
+      if (existingIndex !== -1) {
+        const newState = [...state];
+        newState[existingIndex] = {
+          ...newState[existingIndex],
+          quantity: newState[existingIndex].quantity + quantity,
+          _id: cartItemId
+        };
+        return newState;
       }
+
       return [...state, { _id: cartItemId, item, quantity }];
     }
 
     case 'REMOVE_ITEM':
+      // action.payload is productId (item._id)
       return state.filter(ci => ci.item._id !== action.payload);
 
     case 'UPDATE_ITEM': {
+      // action.payload is { productId, quantity }
       const { productId, quantity } = action.payload;
       return state.map(ci =>
         ci.item._id === productId ? { ...ci, quantity } : ci
@@ -887,7 +894,7 @@ export const CartProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // ---------------- ADD TO CART (OPTIMISTIC) ----------------
+  // ---------------- ADD TO CART ----------------
   const addToCart = useCallback(async (item, qty) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
@@ -914,9 +921,15 @@ export const CartProvider = ({ children }) => {
       if (response.data && response.data._id) {
         dispatch({
           type: 'ADD_ITEM',
-          payload: { cartItemId: response.data._id, item, quantity: qty },
+          payload: {
+            cartItemId: response.data._id,
+            item: response.data.item,
+            quantity: response.data.quantity
+          },
         });
       }
+
+      return response.data;
     } catch (err) {
       console.error('Add to cart failed:', err);
 
@@ -932,16 +945,16 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // ---------------- REMOVE FROM CART (OPTIMISTIC) ----------------
+  // ---------------- REMOVE FROM CART ----------------
   const removeFromCart = useCallback(async (productId) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Find the cart item to get its ID for local state update
-    const cartItem = cartItems.find(ci => ci.item._id === productId);
-    if (!cartItem) return;
+    // Find the cart item to save for rollback
+    const cartItemToRemove = cartItems.find(ci => ci.item._id === productId);
+    if (!cartItemToRemove) return;
 
-    // Optimistic UI update using productId
+    // Optimistic UI update - remove by productId
     dispatch({ type: 'REMOVE_ITEM', payload: productId });
 
     try {
@@ -951,66 +964,72 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error('Remove from cart failed:', err);
 
-      // Rollback on failure - re-add the item
-      if (cartItem) {
+      // Rollback on failure
+      if (cartItemToRemove) {
         dispatch({
           type: 'ADD_ITEM',
           payload: {
-            cartItemId: cartItem._id,
-            item: cartItem.item,
-            quantity: cartItem.quantity
+            cartItemId: cartItemToRemove._id,
+            item: cartItemToRemove.item,
+            quantity: cartItemToRemove.quantity
           },
         });
       }
 
       throw err;
     }
-  }, [cartItems]);
+  }, [cartItems]); // Add cartItems dependency
 
-  // ---------------- UPDATE QUANTITY (OPTIMISTIC) ----------------
+  // ---------------- UPDATE QUANTITY ----------------
   const updateQuantity = useCallback(async (productId, qty) => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Find the cart item
-    const cartItem = cartItems.find(ci => ci.item._id === productId);
-    if (!cartItem) return;
+    // Find current cart item
+    const currentCartItem = cartItems.find(ci => ci.item._id === productId);
+    if (!currentCartItem) {
+      console.warn('Product not found in cart:', productId);
+      return;
+    }
 
-    // Optimistic UI update using productId
+    // Save current quantity for rollback
+    const currentQuantity = currentCartItem.quantity;
+
+    // Optimistic UI update
     dispatch({
       type: 'UPDATE_ITEM',
       payload: { productId, quantity: qty }
     });
 
     try {
-      await api.put(
+      const response = await api.put(
         `/api/cart/${productId}`,
         { quantity: qty },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      return response.data;
     } catch (err) {
       console.error('Update quantity failed:', err);
 
-      // Rollback on failure - restore original quantity
-      if (cartItem) {
-        dispatch({
-          type: 'UPDATE_ITEM',
-          payload: { productId, quantity: cartItem.quantity },
-        });
-      }
+      // Rollback on failure
+      dispatch({
+        type: 'UPDATE_ITEM',
+        payload: { productId, quantity: currentQuantity },
+      });
 
       throw err;
     }
-  }, [cartItems]);
+  }, [cartItems]); // Add cartItems dependency
 
   // ---------------- CLEAR CART ----------------
   const clearCart = useCallback(async () => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
-    // Save current cart for potential rollback
+    // Save current cart for rollback
     const currentCart = [...cartItems];
 
     // Optimistic UI update
@@ -1032,7 +1051,7 @@ export const CartProvider = ({ children }) => {
 
       throw err;
     }
-  }, [cartItems]);
+  }, [cartItems]); // Add cartItems dependency
 
   // ---------------- TOTALS ----------------
   const totalItems = cartItems.reduce((sum, ci) => sum + (ci?.quantity || 0), 0);
@@ -1042,11 +1061,6 @@ export const CartProvider = ({ children }) => {
     const qty = ci?.quantity ?? 0;
     return sum + price * qty;
   }, 0);
-
-  // Helper function to find cartItem by productId
-  const getCartItemByProductId = useCallback((productId) => {
-    return cartItems.find(ci => ci.item._id === productId);
-  }, [cartItems]);
 
   return (
     <CartContext.Provider
@@ -1058,7 +1072,6 @@ export const CartProvider = ({ children }) => {
         clearCart,
         totalItems,
         totalAmount,
-        getCartItemByProductId,
         isLoading: false,
       }}
     >
