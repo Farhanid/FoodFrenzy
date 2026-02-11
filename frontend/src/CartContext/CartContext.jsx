@@ -790,31 +790,48 @@ const cartReducer = (state, action) => {
 
     case 'ADD_ITEM': {
       const { cartItemId, item, quantity } = action.payload;
+
+      // FIX: Check if item exists and has _id
+      if (!item || !item._id) {
+        console.error('Invalid item in ADD_ITEM:', action.payload);
+        return state;
+      }
+
       // Check if item already exists in cart (by product ID)
-      const existingIndex = state.findIndex(ci => ci.item._id === item._id);
+      const existingIndex = state.findIndex(ci => ci.item && ci.item._id === item._id);
 
       if (existingIndex !== -1) {
         const newState = [...state];
         newState[existingIndex] = {
           ...newState[existingIndex],
           quantity: newState[existingIndex].quantity + quantity,
-          _id: cartItemId
+          _id: cartItemId || newState[existingIndex]._id
         };
         return newState;
       }
 
-      return [...state, { _id: cartItemId, item, quantity }];
+      // FIX: Ensure we have a valid item object
+      if (!item || typeof item !== 'object') {
+        console.error('Invalid item data:', item);
+        return state;
+      }
+
+      return [...state, {
+        _id: cartItemId || `temp_${Date.now()}_${item._id}`,
+        item,
+        quantity
+      }];
     }
 
     case 'REMOVE_ITEM':
       // action.payload is productId (item._id)
-      return state.filter(ci => ci.item._id !== action.payload);
+      return state.filter(ci => ci.item && ci.item._id !== action.payload);
 
     case 'UPDATE_ITEM': {
       // action.payload is { productId, quantity }
       const { productId, quantity } = action.payload;
       return state.map(ci =>
-        ci.item._id === productId ? { ...ci, quantity } : ci
+        ci.item && ci.item._id === productId ? { ...ci, quantity } : ci
       );
     }
 
@@ -829,8 +846,24 @@ const cartReducer = (state, action) => {
 // ---------------- INITIALIZER ----------------
 const initializer = () => {
   try {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
-  } catch {
+    const saved = localStorage.getItem('cart');
+    if (!saved) return [];
+
+    const parsed = JSON.parse(saved);
+
+    // FIX: Validate parsed data structure
+    if (!Array.isArray(parsed)) return [];
+
+    // Filter out invalid items
+    return parsed.filter(item =>
+      item &&
+      typeof item === 'object' &&
+      item.item &&
+      typeof item.item === 'object' &&
+      item.item._id
+    );
+  } catch (error) {
+    console.error('Error parsing cart from localStorage:', error);
     return [];
   }
 };
@@ -848,7 +881,11 @@ export const CartProvider = ({ children }) => {
 
   // Persist to localStorage
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
+    try {
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
   }, [cartItems]);
 
   // ---------------- HYDRATE CART (ONCE) ----------------
@@ -866,7 +903,15 @@ export const CartProvider = ({ children }) => {
         });
 
         if (Array.isArray(res.data)) {
-          dispatch({ type: 'HYDRATE_CART', payload: res.data });
+          // FIX: Validate data from API
+          const validData = res.data.filter(item =>
+            item &&
+            item.item &&
+            item.item._id &&
+            typeof item.quantity === 'number'
+          );
+
+          dispatch({ type: 'HYDRATE_CART', payload: validData });
         }
 
         hasHydratedRef.current = true;
@@ -896,6 +941,11 @@ export const CartProvider = ({ children }) => {
 
   // ---------------- ADD TO CART ----------------
   const addToCart = useCallback(async (item, qty) => {
+    // FIX: Validate item
+    if (!item || !item._id) {
+      throw new Error('Invalid item data');
+    }
+
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
@@ -918,7 +968,7 @@ export const CartProvider = ({ children }) => {
       );
 
       // Replace temp ID with real cartItem ID from backend
-      if (response.data && response.data._id) {
+      if (response.data && response.data._id && response.data.item) {
         dispatch({
           type: 'ADD_ITEM',
           payload: {
@@ -947,12 +997,21 @@ export const CartProvider = ({ children }) => {
 
   // ---------------- REMOVE FROM CART ----------------
   const removeFromCart = useCallback(async (productId) => {
+    // FIX: Validate productId
+    if (!productId) {
+      console.error('Invalid productId:', productId);
+      return;
+    }
+
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
     // Find the cart item to save for rollback
-    const cartItemToRemove = cartItems.find(ci => ci.item._id === productId);
-    if (!cartItemToRemove) return;
+    const cartItemToRemove = cartItems.find(ci => ci.item && ci.item._id === productId);
+    if (!cartItemToRemove) {
+      console.warn('Product not found in cart:', productId);
+      return;
+    }
 
     // Optimistic UI update - remove by productId
     dispatch({ type: 'REMOVE_ITEM', payload: productId });
@@ -978,15 +1037,21 @@ export const CartProvider = ({ children }) => {
 
       throw err;
     }
-  }, [cartItems]); // Add cartItems dependency
+  }, [cartItems]);
 
   // ---------------- UPDATE QUANTITY ----------------
   const updateQuantity = useCallback(async (productId, qty) => {
+    // FIX: Validate productId
+    if (!productId) {
+      console.error('Invalid productId:', productId);
+      return;
+    }
+
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('Authentication required');
 
     // Find current cart item
-    const currentCartItem = cartItems.find(ci => ci.item._id === productId);
+    const currentCartItem = cartItems.find(ci => ci.item && ci.item._id === productId);
     if (!currentCartItem) {
       console.warn('Product not found in cart:', productId);
       return;
@@ -1022,7 +1087,7 @@ export const CartProvider = ({ children }) => {
 
       throw err;
     }
-  }, [cartItems]); // Add cartItems dependency
+  }, [cartItems]);
 
   // ---------------- CLEAR CART ----------------
   const clearCart = useCallback(async () => {
@@ -1051,15 +1116,19 @@ export const CartProvider = ({ children }) => {
 
       throw err;
     }
-  }, [cartItems]); // Add cartItems dependency
+  }, [cartItems]);
 
   // ---------------- TOTALS ----------------
-  const totalItems = cartItems.reduce((sum, ci) => sum + (ci?.quantity || 0), 0);
+  const totalItems = cartItems.reduce((sum, ci) => {
+    if (!ci || typeof ci.quantity !== 'number') return sum;
+    return sum + ci.quantity;
+  }, 0);
 
   const totalAmount = cartItems.reduce((sum, ci) => {
-    const price = ci?.item?.price ?? 0;
-    const qty = ci?.quantity ?? 0;
-    return sum + price * qty;
+    if (!ci || !ci.item || typeof ci.item.price !== 'number' || typeof ci.quantity !== 'number') {
+      return sum;
+    }
+    return sum + (ci.item.price * ci.quantity);
   }, 0);
 
   return (
