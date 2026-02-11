@@ -207,25 +207,30 @@ export const getCart = asyncHandler(async (req, res) => {
 
 export const updateCartItem = asyncHandler(async (req, res) => {
     const { quantity } = req.body;
-    const productId = req.params.id;
+    const id = req.params.id;
 
+    // FIRST: Try to find by cartItem ID (_id)
     let cartItem = await CartItem.findOne({
+        _id: id,
         user: req.user.id,
-        item: productId,
     });
 
-    // If item not found, create it
+    // If not found by cartItem ID, try by product ID (for backward compatibility)
     if (!cartItem) {
-        cartItem = await CartItem.create({
+        cartItem = await CartItem.findOne({
+            item: id,
             user: req.user.id,
-            item: productId,
-            quantity: Math.max(1, quantity),
         });
-    } else {
-        cartItem.quantity = Math.max(1, quantity);
-        await cartItem.save();
     }
 
+    // If still not found, return error
+    if (!cartItem) {
+        res.status(404);
+        throw new Error('Cart item not found');
+    }
+
+    cartItem.quantity = Math.max(1, quantity);
+    await cartItem.save();
     await cartItem.populate('item');
 
     res.json({
@@ -254,14 +259,21 @@ export const updateCartItem = asyncHandler(async (req, res) => {
 //     res.json({ success: true });
 // });
 export const deleteCartItem = asyncHandler(async (req, res) => {
-    const productId = req.params.id;
+    const id = req.params.id;
 
-    const cartItem = await CartItem.findOne({
+    // Try both cartItem ID and product ID
+    let cartItem = await CartItem.findOne({
+        _id: id,
         user: req.user.id,
-        item: productId,
     });
 
-    // If not found, silently succeed
+    if (!cartItem) {
+        cartItem = await CartItem.findOne({
+            item: id,
+            user: req.user.id,
+        });
+    }
+
     if (!cartItem) {
         return res.status(204).send();
     }
