@@ -5,58 +5,55 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 
-// const url = 'https://foodfrenzy-backend.onrender.com'
+
 const url = 'https://foodfrenzy-backend.onrender.com'
 
-const Login = ({onLoginSuccess, onClose}) => {
-  const [showToast, setShowToast] = useState({ visible:false, message:'', isError: false})
+const Login = ({ onLoginSuccess, onClose }) => {
+  const [showToast, setShowToast] = useState({ visible: false, message: '', isError: false })
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    username:'', password: '', rememberMe: false
+    username: '', password: '', rememberMe: false
   })
 
   useEffect(() => {
     const stored = localStorage.getItem('loginData');
-    if(stored) setFormData(JSON.parse(stored))
+    if (stored) setFormData(JSON.parse(stored))
   }, [])
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // formData.rememberMe ? localStorage.setItem('loginData', JSON.stringify(formData)) :localStorage.removeItem('loginData');
-    // setShowToast(true);
-    // setTimeout(() => setShowToast(false, 3000));
-    // onLoginSuccess();
-    try{
-      const res = await axios.post(`${url}/api/user/login`,{
+
+    try {
+      const res = await axios.post(`${url}/api/user/login`, {
         email: formData.email,
         password: formData.password
       })
-       console.log('Axios Res:', res)
-       
-       if(res.status === 200 && res.data.success && res.data.token){
+      console.log('Axios Res:', res)
+
+      if (res.status === 200 && res.data.success && res.data.token) {
         localStorage.setItem('authToken', res.data.token);
 
         //REMEMBER ME 
-        formData.rememberMe ? localStorage.setItem('loginData', JSON.stringify(formData)) : 
-        localStorage.removeItem('loginData')
+        formData.rememberMe ? localStorage.setItem('loginData', JSON.stringify(formData)) :
+          localStorage.removeItem('loginData')
 
         setShowToast({ visible: true, message: 'Login Successful!', isError: false })
         setTimeout(() => {
-          setShowToast({ visible: false, message: '', isError: false})
+          setShowToast({ visible: false, message: '', isError: false })
           onLoginSuccess(res.data.token)
         }, 1500)
-       }
-       else{
+      }
+      else {
         console.warn('Unexpected Err:', res.data)
         throw new Error(res.data.message || 'Login Failed')
-       }
-    }catch(err){
-        console.error('Axios error:', err)
-        if(err.response){
-          console.error('Server res:', err.response.status, err.response.data)
-        }
-        const msg = err.response?.data?.message || err.message || 'Login Failed'
-        setShowToast({ visible: true, message:msg, isError: true})
+      }
+    } catch (err) {
+      console.error('Axios error:', err)
+      if (err.response) {
+        console.error('Server res:', err.response.status, err.response.data)
+      }
+      const msg = err.response?.data?.message || err.message || 'Login Failed'
+      setShowToast({ visible: true, message: msg, isError: true })
       setTimeout(() => {
         setShowToast({ visible: false, message: '', isError: false })
         onLoginSuccess(res.data.token)
@@ -64,8 +61,8 @@ const Login = ({onLoginSuccess, onClose}) => {
     }
 
   }
-  const handleChange = ({target: {name, value, type, checked}}) => {
-    setFormData(prev => ({...prev, [name]: type === 'checkbox' ? checked: value}))
+  const handleChange = ({ target: { name, value, type, checked } }) => {
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
   const toggleShowPassword = () => setShowPassword(prev => !prev)
   return (
@@ -75,17 +72,17 @@ const Login = ({onLoginSuccess, onClose}) => {
 
 
 
-          <div className={`px-4 py-3 rounded-md shadow-lg flex items-center gap-2 text-sm ${showToast.isError ? 'bg-red-600 text-white':
-            'bg-green-400 text-white'}`}>
+        <div className={`px-4 py-3 rounded-md shadow-lg flex items-center gap-2 text-sm ${showToast.isError ? 'bg-red-600 text-white' :
+          'bg-green-400 text-white'}`}>
 
-          </div>
+        </div>
 
 
-          <div className='bg-green-600 text-white px-4 py-3 rounded-md shadow-lg flex items-center gap-2 text-sm'>
-            <FaCheckCircle className='flex-shrink-0' />
-            <span>{showToast.message}</span>
+        <div className='bg-green-600 text-white px-4 py-3 rounded-md shadow-lg flex items-center gap-2 text-sm'>
+          <FaCheckCircle className='flex-shrink-0' />
+          <span>{showToast.message}</span>
 
-          </div>
+        </div>
 
       </div>
 
@@ -93,17 +90,17 @@ const Login = ({onLoginSuccess, onClose}) => {
         <div className='relative'>
           <FaUser className={iconClass} />
           <input type="email " name='email' placeholder='Email' value={formData.email}
-          onChange={handleChange} className={`${inputBase} pl-10 pr-4 py-3`} />
+            onChange={handleChange} className={`${inputBase} pl-10 pr-4 py-3`} />
 
         </div>
         <div className='relative'>
           <FaLock className={iconClass} />
-          <input type={showPassword ? 'text': 'password'} name='password' placeholder='Password' value={formData.password}
+          <input type={showPassword ? 'text' : 'password'} name='password' placeholder='Password' value={formData.password}
             onChange={handleChange} className={`${inputBase} pl-10 pr-10 py-3`} />
-            <button type='button' onClick={toggleShowPassword} className='absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-400'>
+          <button type='button' onClick={toggleShowPassword} className='absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-400'>
             {showPassword ? <FaEyeSlash /> : <FaEye />}
 
-            </button>
+          </button>
 
         </div>
         <div className='flex items-center'>
@@ -120,7 +117,7 @@ const Login = ({onLoginSuccess, onClose}) => {
 
       <div className='text-center'>
         <Link to='/signup' onClick={onClose} className='inline-flex items-center gap-2 text-amber-400 hover:text-amber-600 transition-colors'>
-        <FaUserPlus />Create New Account
+          <FaUserPlus />Create New Account
         </Link>
 
       </div>

@@ -4,7 +4,7 @@ import { dummyMenuData } from '../../assets/OmDD'
 import { FaMinus, FaPlus } from 'react-icons/fa'
 import './OurMenu.css'
 import axios from 'axios'
-import { getImageUrl } from '../../utils/imageHelper'; 
+import { getImageUrl } from '../../utils/imageHelper';
 
 
 
@@ -12,35 +12,35 @@ const categories = ['Breakfast', 'Lunch', 'Dinner', 'Mexican', 'Italian', 'Desse
 
 
 const OurMenu = () => {
-   const [activeCategory, setActiveCategory] = useState(categories[0])
-      const {cartItems, addToCart, removeFromCart, updateQuantity} = useCart(); 
-      const [menuData, setMenuData] = useState({})
-  
-      useEffect(() => {
-           const fetchMenu = async () => {
-            try{
-                // const res = await axios.get('https://foodfrenzy-backend.onrender.com/api/items');
+    const [activeCategory, setActiveCategory] = useState(categories[0])
+    const { cartItems, addToCart, removeFromCart, updateQuantity } = useCart();
+    const [menuData, setMenuData] = useState({})
+
+    useEffect(() => {
+        const fetchMenu = async () => {
+            try {
+
                 const res = await axios.get('https://foodfrenzy-backend.onrender.com/api/items');
                 const byCategory = res.data.reduce((acc, item) => {
                     const cat = item.category || 'Uncategorized';
                     acc[cat] = acc[cat] || [];
-                    acc[cat].push(item) 
+                    acc[cat].push(item)
                     return acc;
-                },{});
+                }, {});
                 setMenuData(byCategory)
 
-            }catch(err){
+            } catch (err) {
                 console.error('Failed to load menu items:', err)
             }
-           }
-           fetchMenu()
-      },[])
+        }
+        fetchMenu()
+    }, [])
 
     const getCartEntry = id => cartItems.find(ci => ci?.item?._id === id);
     const getQuantity = id => getCartEntry(id)?.quantity || 0;
 
     //ITEMS TO  DISPLAY
-    const displayItems = (menuData[activeCategory] ?? []).slice(0,12)
+    const displayItems = (menuData[activeCategory] ?? []).slice(0, 12)
 
     return (
         <div className='bg-gradient-to-br from-[#1a120b] via-[#2a1e14] to-[#3e2b1d] min-h-screen py-16 px-4 sm:px-6 lg:px-8'>
@@ -118,7 +118,7 @@ const OurMenu = () => {
                         )
                     })}
                 </div>
-                
+
 
             </div>
 

@@ -1,21 +1,21 @@
 import mongoose from 'mongoose';
 const orderItemSchema = new mongoose.Schema({
-    item:{
-        name:{ type: String, required: true},
+    item: {
+        name: { type: String, required: true },
         price: { type: Number, required: true, min: 0 },
         imageUrl: { type: String, required: true }
     },
     quantity: { type: Number, required: true, min: 1 }
-},{_id: true})
+}, { _id: true })
 
 const orderSchema = new mongoose.Schema({
-       //User info
-    user:{
+    //User info
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    email:{ type: String, required: true, index: true },
-    firstName: { type: String, required: true},
+    email: { type: String, required: true, index: true },
+    firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phone: { type: String, required: true },
 
@@ -33,9 +33,9 @@ const orderSchema = new mongoose.Schema({
         enum: ['cod', 'online', 'card', 'upi'],
         index: true
     },
-    paymentIntentId: {type: String},
+    paymentIntentId: { type: String },
     sessionId: { type: String, required: true },
-    transcationId: { type: String},
+    transcationId: { type: String },
     paymentStatus: {
         type: String,
         enum: ['pending', 'succeeded', 'failed'],
@@ -43,7 +43,7 @@ const orderSchema = new mongoose.Schema({
         index: true
     },
     //ORDER CALCULATION
-    subTotal: { type: Number, required: true, min: 0},
+    subTotal: { type: Number, required: true, min: 0 },
     tax: { type: Number, required: true, min: 0 },
     shipping: { type: Number, required: true, min: 0, default: 0 },
     total: { type: Number, required: true, min: 0 },
@@ -59,16 +59,16 @@ const orderSchema = new mongoose.Schema({
     deliveredAt: Date,
 
     //TIMESTAMPS
-    createdAt: { type: Date, default: Date.now, index: true},
+    createdAt: { type: Date, default: Date.now, index: true },
     updatedAt: { type: Date, default: Date.now }
 })
 
-orderSchema.index({ user: 1, createdAt: -1});
+orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1, paymentStatus: 1 })
 
 orderSchema.pre('save', function () {
     this.updatedAt = new Date();
-    
+
 })
 
 const Order = mongoose.model('Order', orderSchema);

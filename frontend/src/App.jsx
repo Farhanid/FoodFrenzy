@@ -18,7 +18,7 @@ const App = () => {
       <Route path='/contact' element={<ContactPage />} />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/menu' element={<Menu />} />
-     
+
       {/* PAYMENT VERIFICATION */}
       <Route path='/myorder/verify' element={<VerifyPaymentPage />} />
 
@@ -29,9 +29,9 @@ const App = () => {
         <PrivateRoute>
           <Cart />
         </PrivateRoute>
-       } />
+      } />
 
-      <Route path='/checkout' element={<PrivateRoute>   <CheckoutPage /> </PrivateRoute>   } />
+      <Route path='/checkout' element={<PrivateRoute>   <CheckoutPage /> </PrivateRoute>} />
       <Route path='/myorder' element={<PrivateRoute>  <MyOrderPage />   </PrivateRoute>} />
 
     </Routes>

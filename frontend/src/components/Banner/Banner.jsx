@@ -79,7 +79,7 @@
 //               <button className='group flex items-center gap-3 bg-a,ber-800/30 hover:bg-amber-800/50 px-6 py-3 rounded-xl transition-all duration-300 border-2 border-amber-700/50 hover:border-amber-400'>
 //               <FaDownload className='text-xl text-amber-400 group-hover:animate-bounce' />
 //               <span className='text-lg'>Download App</span>
-               
+
 //               </button>
 
 //               <button onClick={() => setShowVideo(true)} className='group flex items-center gap-3 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-amber-300/30' >
@@ -216,12 +216,12 @@ const Banner = () => {
               </div>
             ))}
 
-            
 
 
 
 
-            
+
+
 
           </div>
         </div>
@@ -229,22 +229,22 @@ const Banner = () => {
 
 
 
-     {/*vide modal */}
- 
-     {showVideo && (
-      <div className='fixed inset-0 flex items-center justify-center z-50 bg-black/90 backdrop-blur-lg p-4'>
-        <button onClick={() => setShowVideo(false)} 
-          className='absolute top-6 right-6 text-amber-400 hover:text-amber-300 text-3xl z-10 transition-all'>
-             <FaTimes  />
-        </button>
-        <div className='w-full max-w-4xl mx-auto '>
-          <video controls autoPlay className='w-full aspect-video object-contain rounded-lg shadow-2xl  '>
-            <source src={video} type='video/mp4' />
-          </video>
+      {/*vide modal */}
 
+      {showVideo && (
+        <div className='fixed inset-0 flex items-center justify-center z-50 bg-black/90 backdrop-blur-lg p-4'>
+          <button onClick={() => setShowVideo(false)}
+            className='absolute top-6 right-6 text-amber-400 hover:text-amber-300 text-3xl z-10 transition-all'>
+            <FaTimes />
+          </button>
+          <div className='w-full max-w-4xl mx-auto '>
+            <video controls autoPlay className='w-full aspect-video object-contain rounded-lg shadow-2xl  '>
+              <source src={video} type='video/mp4' />
+            </video>
+
+          </div>
         </div>
-      </div>
-     )}
+      )}
     </div>
   )
 }

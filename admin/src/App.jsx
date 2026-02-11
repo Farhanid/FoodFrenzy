@@ -6,19 +6,17 @@ import { Routes, Route } from "react-router-dom";
 
 
 
-
-
 function App() {
-  
+
 
   return (
     <>
-    <Navbar />
-    <Routes>
-        <Route  path='/' element={<AddItems />} />
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<AddItems />} />
         <Route path='/list' element={<List />} />
         <Route path='/orders' element={<Order />} />
-    </Routes>
+      </Routes>
     </>
   )
 }

@@ -3,7 +3,7 @@ import { confirmPayment, createOrder, getAllOrders, getOrderById, getOrders, upd
 import authMiddleware from '../middleware/auth.js'
 
 const orderRouter = express.Router();
-orderRouter.get('/getall',  getAllOrders)
+orderRouter.get('/getall', getAllOrders)
 orderRouter.put('/getall/:id', updateAnyOrder)
 
 //PROTECT REST OF ROUTES USING MIDDLEWARE

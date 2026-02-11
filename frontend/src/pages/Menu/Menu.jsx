@@ -4,14 +4,14 @@ import Footer from '../../components/Footer/Footer'
 import OurMenu from '../../components/OurMenu/OurMenu'
 
 const Menu = () => {
-  return (
-      <>
-          <Navbar />
-          <OurMenu />
-          <Footer />
+    return (
+        <>
+            <Navbar />
+            <OurMenu />
+            <Footer />
 
-      </>
-  )
+        </>
+    )
 }
 
 export default Menu

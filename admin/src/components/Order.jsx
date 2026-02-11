@@ -13,7 +13,6 @@ const Order = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          // 'https://foodfrenzy-backend.onrender.com/api/orders/getall',
           'https://foodfrenzy-backend.onrender.com/api/orders/getall',
           {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -44,31 +43,29 @@ const Order = () => {
   }, []);
 
 
-const handleStatusChange = async (orderId, newStatus) => {
-   try{
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      await axios.put(`https://foodfrenzy-backend.onrender.com/api/orders/getall/${orderId}`,
+        { status: newStatus })
+      setOrders(orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o))
 
-    // await axios.put(`https://foodfrenzy-backend.onrender.com/api/orders/getall/${orderId}`,
-     await axios.put(`https://foodfrenzy-backend.onrender.com/api/orders/getall/${orderId}`,
-      {status: newStatus})
-      setOrders(orders.map(o => o._id === orderId ?  {...o, status: newStatus}: o))
-
-   }catch(err){
-     alert(err.response?.data?.message || 'Failed to update order status')
-   }
-}
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update order status')
+    }
+  }
 
 
- if(loading) return (
-  <div className={layoutClasses.page + 'flex items-center justify-center'}>
+  if (loading) return (
+    <div className={layoutClasses.page + 'flex items-center justify-center'}>
       <div className='text-amber-400 text-xl'>Loading orders...</div>
-  </div> 
- )
+    </div>
+  )
 
- if(error) return(
-     <div className = { layoutClasses.page + 'flex items-center justify-center' } >
-    <div className='text-red-400 text-xl'>{error}</div>
-  </div > 
- )
+  if (error) return (
+    <div className={layoutClasses.page + 'flex items-center justify-center'} >
+      <div className='text-red-400 text-xl'>{error}</div>
+    </div >
+  )
 
 
   return (
@@ -89,110 +86,109 @@ const handleStatusChange = async (orderId, newStatus) => {
               <tbody>
                 {orders.map(order => {
 
-                  // Sum up the quantities of all items in the order
+
                   const totalItems = order.items.reduce((s, i) => s + i.quantity, 0);
-                  // Use the precomputed total if available; otherwise calculate price × quantity for each item
+
                   const totalPrice = order.total ?? order.items.reduce((s, i) => s + i.item.price * i.quantity, 0);
-                  // Look up the display details for the payment method (lowercased), defaulting if not found
+
                   const payMethod = paymentMethodDetails[order.paymentMethod?.toLowerCase()] || paymentMethodDetails.default;
-                  // Pick the style for the payment status, falling back to “processing” if unknown
+
                   const payStatusStyle = statusStyles[order.paymentStatus] || statusStyles.processing;
-                  // Pick the style for the order’s overall status, falling back to “processing” if unknown
+
                   const stat = statusStyles[order.status] || statusStyles.processing;
 
- 
-                  return(
+
+                  return (
                     <tr key={order._id} className={tableClasses.row}>
                       <td className={tableClasses.cellBase + 'font-mono text-sm text-amber-100'}>
-                           #{order._id.slice(-8)}
+                        #{order._id.slice(-8)}
                       </td>
 
                       <td className={tableClasses.cellBase}>
                         {/*USER DATA INFO */}
-                         <div className='flex gap-2 items-center '>
-                            <FiUser className='text-amber-400' />
-                            <div>
-                              <p className='text-amber-100'>
-                                {order.user?.name || order.firstName + ' ' + order.lastName}
-                              </p>
-                              <p className='text-sm text-amber-400/60'>
-                                 {order.user?.phone || order.phone }
-                              </p>
-                              <p className='text-sm text-amber-400/60'>
-                                   {order.user?.email || order.email}
-                              </p>
+                        <div className='flex gap-2 items-center '>
+                          <FiUser className='text-amber-400' />
+                          <div>
+                            <p className='text-amber-100'>
+                              {order.user?.name || order.firstName + ' ' + order.lastName}
+                            </p>
+                            <p className='text-sm text-amber-400/60'>
+                              {order.user?.phone || order.phone}
+                            </p>
+                            <p className='text-sm text-amber-400/60'>
+                              {order.user?.email || order.email}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      {/*Address section */}
+                      <td className={tableClasses.cellBase}>
+                        <div className='text-amber-100/80 text-sm max-w-[200px]'>
+                          {order.address}, {order.city}- {order.zipCode}
+                        </div>
+                      </td>
+
+                      <td className={tableClasses.cellBase}>
+                        <div className='space-y-1 max-h-52 overflow-auto '>
+                          {order.items.map((itm, idx) => (
+                            <div key={idx} className='flex items-center gap-3 p-2 rounded-lg'>
+                              <img src={`https://foodfrenzy-backend.onrender.com${itm.item.imageUrl}`}
+                                alt={itm.item.name} className='w-10 h-10 object-cover rounded-lg' />
+
+                              <div className='flex-1'>
+                                <span className='text-amber-100/80 text-sm block truncate'>
+                                  {itm.item.name}
+                                </span>
+                                <div className='flex items-center gap-2 text-xs text-amber-400/60'>
+                                  <span>{itm.item.price.toFixed(2)}</span>
+                                  <span>&dot; </span>
+                                  <span>x{itm.quantity}</span>
+                                </div>
+                              </div>
                             </div>
-                         </div>
-                      </td>
-                            {/*Address section */}
-                      <td className={tableClasses.cellBase}>
-                          <div className='text-amber-100/80 text-sm max-w-[200px]'>
-                              {order.address}, {order.city}- {order.zipCode}
-                          </div>
-                      </td>
-
-                      <td className={tableClasses.cellBase}>
-                          <div className='space-y-1 max-h-52 overflow-auto '>
-                         {order.items.map((itm, idx) => (
-                          <div key={idx} className='flex items-center gap-3 p-2 rounded-lg'>
-                              {/* <img src={`https://foodfrenzy-backend.onrender.com${itm.item.imageUrl}`} */}
-                             <img src={`https://foodfrenzy-backend.onrender.com${itm.item.imageUrl}`}
-                               alt={itm.item.name} className='w-10 h-10 object-cover rounded-lg' />
-
-                               <div className='flex-1'>
-                                     <span className='text-amber-100/80 text-sm block truncate'>
-                                          {itm.item.name}
-                                     </span>
-                                     <div className='flex items-center gap-2 text-xs text-amber-400/60'>
-                                 <span>{itm.item.price.toFixed(2)}</span>
-                                 <span>&dot; </span>
-                                 <span>x{itm.quantity}</span>
-                                     </div>
-                               </div>
-                          </div>
-                         ))}
-                          </div>
+                          ))}
+                        </div>
                       </td>
 
                       <td className={tableClasses.cellBase + 'text-center'}>
-                         <div className='flex items-center justify-center gap-1 '>
-                   <FiBox className='text-amber-400' />
-                   <span className='text-amber-300 text-lg'>{totalItems}</span>
-                         </div>
+                        <div className='flex items-center justify-center gap-1 '>
+                          <FiBox className='text-amber-400' />
+                          <span className='text-amber-300 text-lg'>{totalItems}</span>
+                        </div>
                       </td>
 
                       <td className={tableClasses.cellBase + 'text-amber-300 text-lg'}>
-            {totalPrice.toFixed(2)}
+                        {totalPrice.toFixed(2)}
                       </td>
 
                       <td className={tableClasses.cellBase}>
-              <div className='flex flex-col gap-2'>
-                     <div className={`${payMethod.class} px-3 py-1.5 rounded-lg border text-sm`}>
-                          {payMethod.label}
-                     </div>
-                     <div className={`${payStatusStyle.color} flex items-center gap-2 text-sm`}>
-                             {iconMap[payStatusStyle.icon]}
-                             <span>
+                        <div className='flex flex-col gap-2'>
+                          <div className={`${payMethod.class} px-3 py-1.5 rounded-lg border text-sm`}>
+                            {payMethod.label}
+                          </div>
+                          <div className={`${payStatusStyle.color} flex items-center gap-2 text-sm`}>
+                            {iconMap[payStatusStyle.icon]}
+                            <span>
                               {payStatusStyle.label}
-                             </span>
-                     </div>
-              </div>
+                            </span>
+                          </div>
+                        </div>
                       </td>
 
                       <td className={tableClasses.cellBase}>
-             <div className='flex items-center gap-2'>
-               <span className={`${stat.color} text-xl`}>
-        {iconMap[stat.icon]}
-               </span>
-               <select value={order.value} onChange={e => handleStatusChange(order._id, e.target.value)}
-                className={`px-4 py-2 rounded-lg ${stat.bg} ${stat.color} border border-amber-500/20 text-sm cursor-pointer`}>
-                  {Object.entries(statusStyles).filter(([k]) => k !== 'succeeded').map(([key,sty]) => (
-                    <option value={key} key={key} className={`${sty.bg} ${sty.color}`}>
-                      {sty.label}
-                    </option>
-                  ))}
-                </select>
-             </div>
+                        <div className='flex items-center gap-2'>
+                          <span className={`${stat.color} text-xl`}>
+                            {iconMap[stat.icon]}
+                          </span>
+                          <select value={order.value} onChange={e => handleStatusChange(order._id, e.target.value)}
+                            className={`px-4 py-2 rounded-lg ${stat.bg} ${stat.color} border border-amber-500/20 text-sm cursor-pointer`}>
+                            {Object.entries(statusStyles).filter(([k]) => k !== 'succeeded').map(([key, sty]) => (
+                              <option value={key} key={key} className={`${sty.bg} ${sty.color}`}>
+                                {sty.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -204,7 +200,7 @@ const handleStatusChange = async (orderId, newStatus) => {
           </div>
 
           {orders.length === 0 && <div className='text-center py-12 text-amber-100/60 text-xl'>
-          No order found </div>}
+            No order found </div>}
         </div>
       </div>
     </div>

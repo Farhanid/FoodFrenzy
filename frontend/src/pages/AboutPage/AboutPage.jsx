@@ -6,10 +6,10 @@ import About from '../../components/About/About'
 const AboutPage = () => {
   return (
     <>
-        <Navbar />
-        <About />
-        <Footer />
-        
+      <Navbar />
+      <About />
+      <Footer />
+
     </>
   )
 }

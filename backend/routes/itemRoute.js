@@ -1,28 +1,3 @@
-// import express from 'express'
-// import multer from 'multer'
-// import { createItem, getItems, deleteItem } from '../controllers/itemController.js'
-
-
-// const itemRouter = express.Router();
-
-// //Type here multer function to store images
-
-// const storage = multer.diskStorage({
-//     destination: (_req, _file, cb) => cb(null, 'uploads/'),
-//     filename: (_req,file,cb) => cb(null, `${Date.now()}-${file.originalname}`)
-// })
-
-// const upload = multer({ storage});
-
-// itemRouter.post('/', upload.single('image'), createItem);
-// itemRouter.get('/', getItems);
-// itemRouter.delete('/:id', deleteItem )
-
-
-// export default itemRouter;
-
-
-
 import express from 'express'
 import multer from 'multer'
 import { v2 as cloudinary } from 'cloudinary'
@@ -31,7 +6,7 @@ import { createItem, getItems, deleteItem } from '../controllers/itemController.
 
 const itemRouter = express.Router();
 
-// ========== CLOUDINARY SETUP ==========
+
 // 1. Configure Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -41,7 +16,7 @@ cloudinary.config({
 
 console.log('🌥️ Cloudinary configured for:', process.env.CLOUDINARY_CLOUD_NAME);
 
-// 2. Cloudinary Storage (REPLACES diskStorage!)
+// 2. Cloudinary Storage 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
@@ -57,7 +32,7 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// ========== ROUTES ==========
+
 itemRouter.post('/', upload.single('image'), createItem);
 itemRouter.get('/', getItems);
 itemRouter.delete('/:id', deleteItem);
