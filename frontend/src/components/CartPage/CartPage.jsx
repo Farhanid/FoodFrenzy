@@ -83,7 +83,7 @@ const CartPage = () => {
 
                   <div className='flex items-center gap-3'>
                     <button
-                      onClick={() => handleUpdateQuantity(item._id, Math.max(1, quantity - 1))}
+                      onClick={() => handleUpdateQuantity(_id, Math.max(1, quantity - 1))}
                       disabled={loading[item._id]}
                       className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95 disabled:opacity-50'>
                       {loading[item._id] ? (
@@ -98,7 +98,7 @@ const CartPage = () => {
                     </span>
 
                     <button
-                      onClick={() => handleUpdateQuantity(item._id, quantity + 1)}
+                      onClick={() => handleUpdateQuantity(_id, quantity + 1)} //changes
                       disabled={loading[item._id]}
                       className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-all duration-300 active:scale-95 disabled:opacity-50'>
                       {loading[item._id] ? (
