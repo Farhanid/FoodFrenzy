@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import './OurHomeMenu.css'
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageHelper';
+import { API_URL } from '../../utils/config';
 
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Mexican', 'Italian', 'Desserts', 'Drinks']
 
@@ -17,7 +18,7 @@ const OurHomeMenu = () => {
 
   useEffect(() => {
 
-    axios.get('https://foodfrenzy-backend.onrender.com/api/items')
+    axios.get(`${API_URL}/api/items`)
       .then(res => {
         const grouped = res.data.reduce((acc, item) => {
           acc[item.category] = acc[item.category] || [];

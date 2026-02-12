@@ -6,6 +6,7 @@ import { HiMinus, HiPlus } from "react-icons/hi";
 import FloatingParticle from '../FloatingParticle/FloatingParticle';
 import axios from 'axios';
 import { getImageUrl } from '../../utils/imageHelper';
+import { API_URL } from '../../utils/config';
 
 
 const SpecialOffer = () => {
@@ -17,7 +18,7 @@ const SpecialOffer = () => {
 
     //FETCH MENU
     useEffect(() => {
-        axios.get('https://foodfrenzy-backend.onrender.com/api/items')
+        axios.get(`${API_URL}/api/items`)
             .then(res => setItems(res.data.items ?? res.data))
             .catch(err => console.error(err))
     }, [])

@@ -4,9 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { FaArrowLeft, FaCheckCircle, FaEye, FaEyeSlash, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../../utils/config';
 
 
-const url = 'https://foodfrenzy-backend.onrender.com'
+const url = `${API_URL}`
 
 const AwesomeToast = ({ message, icon, type = 'success' }) => {
   const bgColor = type === 'error'

@@ -3,10 +3,11 @@ import { FaArrowRight, FaCheckCircle, FaEye, FaEyeSlash, FaLock, FaUser, FaUserP
 import { iconClass, inputBase } from '../../assets/dummydata';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../../utils/config';
 
 
 
-const url = 'https://foodfrenzy-backend.onrender.com'
+const url = `${API_URL}`
 
 const Login = ({ onLoginSuccess, onClose }) => {
   const [showToast, setShowToast] = useState({ visible: false, message: '', isError: false })

@@ -4,6 +4,7 @@ import { FaArrowLeft, FaLock } from 'react-icons/fa'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../../CartContext/CartContext'
 import axios from 'axios'
+import { API_URL } from '../../utils/config'
 
 const Checkout = () => {
   const { totalAmount, cartItems, clearCart } = useCart();
@@ -34,7 +35,7 @@ const Checkout = () => {
 
       if (paymentStatus === 'success' && sessionId) {
         axios.post(
-          'https://foodfrenzy-backend.onrender.com/api/orders/confirm',
+          `${API_URL}/api/orders/confirm`,
           { sessionId },
           { headers: authHeaders }
         )
@@ -87,7 +88,7 @@ const Checkout = () => {
       if (formData.paymentMethod === 'online') {
         const { data } = await axios.post(
 
-          'https://foodfrenzy-backend.onrender.com/api/orders',
+          `${API_URL}/api/orders`,
           payload,
           { headers: authHeaders }
         )
@@ -95,7 +96,7 @@ const Checkout = () => {
       } else {
         const { data } = await axios.post(
 
-          'https://foodfrenzy-backend.onrender.com/api/orders',
+          `${API_URL}/api/orders`,
           payload,
           { headers: authHeaders }
         )

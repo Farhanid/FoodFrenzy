@@ -4,6 +4,10 @@ import { FiHeart, FiStar, FiUpload } from 'react-icons/fi';
 import axios from 'axios'
 import { FaRupeeSign } from 'react-icons/fa'
 
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AddItems = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -55,7 +59,7 @@ const AddItems = () => {
             });
 
             const res = await axios.post(
-                'https://foodfrenzy-backend.onrender.com/api/items',
+                `${API_URL}/api/items`,
                 payload,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             )

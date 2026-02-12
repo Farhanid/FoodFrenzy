@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import axios from 'axios';
+import { API_URL } from '../utils/config';
 
 const CartContext = createContext();
 
@@ -56,7 +57,7 @@ const initializer = () => {
 
 
 const api = axios.create({
-  baseURL: 'https://foodfrenzy-backend.onrender.com',
+  baseURL: `${API_URL}`,
   withCredentials: true,
 });
 

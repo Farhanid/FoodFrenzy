@@ -1,3 +1,5 @@
+import { API_URL } from "./config";
+
 // frontend/src/utils/imageHelper.js
 export const getImageUrl = (imageUrl) => {
     if (!imageUrl) return '';
@@ -9,7 +11,7 @@ export const getImageUrl = (imageUrl) => {
 
     // Local uploads - prepend backend URL
     if (imageUrl.startsWith('/uploads')) {
-        return `https://foodfrenzy-backend.onrender.com${imageUrl}`;
+        return `${API_URL}${imageUrl}`;
     }
 
     return imageUrl;
@@ -22,7 +24,7 @@ export const getImageUrlForEnv = (imageUrl) => {
     if (imageUrl.startsWith('http')) return imageUrl;
 
     if (imageUrl.startsWith('/uploads')) {
-        const backendUrl = import.meta.env.VITE_API_URL || 'https://foodfrenzy-backend.onrender.com';
+        const backendUrl = import.meta.env.VITE_API_URL || `${API_URL}`;
         return `${backendUrl}${imageUrl}`;
     }
 

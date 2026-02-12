@@ -3,6 +3,7 @@ import { layoutClasses, tableClasses, statusStyles, paymentMethodDetails, iconMa
 import { FiBox, FiUser } from 'react-icons/fi'
 import axios from 'axios'
 
+const API_URL = import.meta.env.VITE_API_URL;
 const Order = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -13,7 +14,7 @@ const Order = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          'https://foodfrenzy-backend.onrender.com/api/orders/getall',
+          `${API_URL}/api/orders/getall`,
           {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           }
@@ -45,7 +46,7 @@ const Order = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`https://foodfrenzy-backend.onrender.com/api/orders/getall/${orderId}`,
+      await axios.put(`${API_URL}/api/orders/getall/${orderId}`,
         { status: newStatus })
       setOrders(orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o))
 
@@ -132,7 +133,7 @@ const Order = () => {
                         <div className='space-y-1 max-h-52 overflow-auto '>
                           {order.items.map((itm, idx) => (
                             <div key={idx} className='flex items-center gap-3 p-2 rounded-lg'>
-                              <img src={`https://foodfrenzy-backend.onrender.com${itm.item.imageUrl}`}
+                              <img src={`${API_URL}${itm.item.imageUrl}`}
                                 alt={itm.item.name} className='w-10 h-10 object-cover rounded-lg' />
 
                               <div className='flex-1'>

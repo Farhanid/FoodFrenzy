@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { FiArrowLeft, FiBox, FiCheckCircle, FiClock, FiMapPin, FiTruck, FiUser } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
+import { API_URL } from '../../utils/config'
 
 const MyOrder = () => {
 
@@ -16,7 +17,7 @@ const MyOrder = () => {
         const fetchOrders = async () => {
             try {
 
-                const response = await axios.get('https://foodfrenzy-backend.onrender.com/api/orders', {
+                const response = await axios.get(`${API_URL}/api/orders`, {
                     params: { email: user?.email },
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('authToken')}`

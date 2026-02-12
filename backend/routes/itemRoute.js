@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
-import { createItem, getItems, deleteItem } from '../controllers/itemController.js'
+import { createItem, getItems, deleteItem,getItemById, updateItem } from '../controllers/itemController.js'
 
 const itemRouter = express.Router();
 
@@ -35,6 +35,8 @@ const upload = multer({
 
 itemRouter.post('/', upload.single('image'), createItem);
 itemRouter.get('/', getItems);
+itemRouter.get('/:id', getItemById);      // ✅ ADD THIS ROUTE
+itemRouter.put('/:id', upload.single('image'), updateItem); // ✅ ADD THIS ROUTE
 itemRouter.delete('/:id', deleteItem);
 
 export default itemRouter;
