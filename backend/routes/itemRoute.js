@@ -2,12 +2,11 @@ import express from 'express'
 import multer from 'multer'
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
-import { createItem, getItems, deleteItem,getItemById, updateItem } from '../controllers/itemController.js'
+import { createItem, getItems, deleteItem, getItemById, updateItem } from '../controllers/itemController.js'
 
 const itemRouter = express.Router();
 
 
-// 1. Configure Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -16,7 +15,7 @@ cloudinary.config({
 
 console.log('🌥️ Cloudinary configured for:', process.env.CLOUDINARY_CLOUD_NAME);
 
-// 2. Cloudinary Storage 
+
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
@@ -26,17 +25,16 @@ const storage = new CloudinaryStorage({
     }
 });
 
-// 3. Multer with Cloudinary
 const upload = multer({
-    storage: storage,  // ← MUST be CloudinaryStorage!
+    storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 
 itemRouter.post('/', upload.single('image'), createItem);
 itemRouter.get('/', getItems);
-itemRouter.get('/:id', getItemById);      // ✅ ADD THIS ROUTE
-itemRouter.put('/:id', upload.single('image'), updateItem); // ✅ ADD THIS ROUTE
+itemRouter.get('/:id', getItemById);
+itemRouter.put('/:id', upload.single('image'), updateItem);
 itemRouter.delete('/:id', deleteItem);
 
 export default itemRouter;

@@ -2,9 +2,6 @@ import itemModal from "../modals/itemModal.js";
 
 export const createItem = async (req, res, next) => {
     try {
-
-        console.log('📦 req.file from Cloudinary:', req.file);
-
         const { name, description, category, price, rating, hearts } = req.body;
         const imageUrl = req.file ? req.file.path : '';
         console.log(' Cloudinary Image URL:', imageUrl);
@@ -55,9 +52,7 @@ export const getItemById = async (req, res, next) => {
     }
 }
 
-// ============================================
-// 2. UPDATE ITEM (ADD THIS)
-// ============================================
+
 export const updateItem = async (req, res, next) => {
     try {
         const { id } = req.params;

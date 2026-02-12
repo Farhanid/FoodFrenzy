@@ -111,7 +111,7 @@ const CartPage = () => {
 
                   <div className='flex items-center justify-between w-full'>
                     <button
-                      onClick={() => handleRemoveItem(_id)} //changes
+                      onClick={() => handleRemoveItem(_id)}
                       disabled={loading[`remove_${item._id}`]}
                       className='bg-amber-900/40 px-3 py-2.5 rounded-full font-cinzel text-xs uppercase transition-all duration-300 hover:bg-amber-600/50 flex items-center gap-1 active:scale-95 disabled:opacity-50'>
                       {loading[`remove_${item._id}`] ? (

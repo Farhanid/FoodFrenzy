@@ -213,7 +213,12 @@ const MyOrder = () => {
                                                         {order.items.map((item, index) => (
                                                             <div key={`${order._id}-${index}`} className='flex items-center gap-3 p-2  bg-[#3a2b2b]/50 rounded-lg'>
 
-                                                                <img src={`https://foodfrenzy-backend.onrender.com${item.item.imageUrl}`} alt={item.item.name} className='w-10 h-10 object-cover rounded-lg' />
+                                                                <img src={item.item.imageUrl.startsWith('http')
+                                                                    ? item.item.imageUrl  // Cloudinary URL - use as is
+                                                                    : `https://foodfrenzy-backend.onrender.com${item.item.imageUrl}` // Local upload - prepend backend
+                                                                } 
+
+                                                                 alt={item.item.name} className='w-10 h-10 object-cover rounded-lg' />
 
                                                                 <div className='flex-1'>
                                                                     <span className='text-amber-100/80 text-sm block'>
