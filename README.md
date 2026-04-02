@@ -5,7 +5,9 @@ A full-stack "Food Ordering E-Commerce Platform" that allows users to browse pro
 
 The system includes a **User Application**, **Backend API**, and an **Admin Dashboard** for complete product and order management.
 
----
+⚡ Performance Optimizations
+- Implemented Lazy Loading for components to improve initial load time
+- Reduced bundle size and enhanced user experience
 
 ## 🔗 Live Demo
 - Frontend: https://foodfrenzy-frontend.onrender.com
