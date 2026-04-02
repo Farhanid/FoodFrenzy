@@ -16,7 +16,7 @@ const SpecialOffer = () => {
     const { addToCart, updateQuantity, removeFromCart, cartItems } = useCart();
 
 
-    //FETCH MENU
+   // FETCH MENU
     useEffect(() => {
         axios.get(`${API_URL}/api/items`)
             .then(res => setItems(res.data.items ?? res.data))
@@ -46,7 +46,6 @@ const SpecialOffer = () => {
                         const cartItem = cartItems.find(ci => ci?.item?._id === item?._id); //changed
                         const qty = cartItem ? cartItem.quantity : 0;
                         const cartId = cartItem?._id
-
                         return (
                             <div key={item._id} className='relative group bg-[#4b3b3b] rounded-3xl overflow-hidden shadow-2xl transform hover:-translate-y-4 transition-all duration-500 hover:shadow-red-900/40 border-2 border-transparent hover:border-amber-500/20 before:absolute before:inset-0 hover:before:opacity-20'>
                                 <div className='relative h-72 overflow-hidden'>

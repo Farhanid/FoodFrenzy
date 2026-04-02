@@ -138,12 +138,12 @@ const CartPage = () => {
                   Continue Shopping
                 </Link>
 
-                <div className='flex items-center gap-8'>
+                <div className='flex items-center  gap-4 sm:gap-8'>
                   <h2 className='text-3xl font-dancingscript text-amber-100'>
                     Total:₹{Number(totalAmount).toFixed(2)}
                   </h2>
 
-                  <Link to='/checkout' className='bg-amber-900/40 px-8 py-3 rounded-full font-cinzel uppercase tracking-wider hover:bg-amber-800/50 transition-all duration-300 text-amber-100 flex items-center gap-2 active:scale-95'>
+                  <Link to='/checkout' className='bg-amber-900/40 text-center  px-4 sm:px-8 py-1 sm:py-3 rounded-full font-cinzel uppercase tracking-wider hover:bg-amber-800/50 transition-all duration-300 text-amber-100 flex items-center gap-2 active:scale-95'>
                     Checkout Now
                   </Link>
                 </div>

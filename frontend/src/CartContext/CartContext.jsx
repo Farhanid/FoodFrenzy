@@ -64,7 +64,7 @@ const api = axios.create({
 
 export const CartProvider = ({ children }) => {
   const [cartItems, dispatch] = useReducer(cartReducer, [], initializer);
-  const hasHydratedRef = useRef(false);
+  const hasHydratedRef = useRef(false); //multiple api calls prevent /api/cart
 
   // Persist to localStorage
   useEffect(() => {
@@ -92,7 +92,6 @@ export const CartProvider = ({ children }) => {
             cartItem.item._id &&
             cartItem.item.name
           );
-
           dispatch({ type: 'HYDRATE_CART', payload: validCartData });
         }
 
@@ -172,7 +171,6 @@ export const CartProvider = ({ children }) => {
       throw err;
     }
   }, []);
-
 
 
   const updateQuantity = useCallback(async (_id, qty) => {
